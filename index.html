@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DACHUBGAMES</title>
+
+<link href="https://store.fastly.steamstatic.com/public/shared/css/motiva_sans.css" rel="stylesheet">
+
+<style>
+:root{
+--bg-dark:#0b0d11;
+--steam-blue:#66c0f4;
+--steam-green:#8ed629;
+--accent:#00aff0;
+--card-bg:#16202d;
+}
+body{
+margin:0;
+font-family:"Motiva Sans",sans-serif;
+background:var(--bg-dark);
+color:#c6d4df;
+padding-top: 60px;
+}
+header{
+position:fixed;
+top:0;
+width:100%;
+background:rgba(11,13,17,.95);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,.05);
+z-index:1000;
+}
+.container{
+width:90%;
+max-width:1200px;
+margin:auto;
+display:flex;
+align-items:center;
+height:60px;
+}
+.logo{
+color:#fff;
+font-size:26px;
+font-weight:900;
+text-decoration:none;
+}
+.logo span{color:var(--accent);}
+.hero{
+height:550px;
+position:relative;
+overflow:hidden;
+background:#000;
+}
+.hero-bg{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+transform:scale(1.05);
+transition: 1s ease-in-out;
+}
+.hero-overlay{
+position:absolute;
+inset:0;
+background:linear-gradient(to right,#0b0d11 0%,rgba(11,13,17,.6) 40%,transparent 100%);
+}
+.hero-content{
+position:relative;
+z-index:2;
+width:45%;
+padding-left:8%;
+top:50%;
+transform:translateY(-50%);
+opacity:0;
+transition:.6s;
+}
+.hero-content.active{opacity:1; transform:translateY(-50%) translateX(10px);}
+.hero-tag{
+background:var(--accent);
+padding:5px 12px;
+font-size:11px;
+font-weight:800;
+color:#fff;
+display:inline-block;
+border-radius: 2px;
+}
+.hero-title{
+font-size:48px;
+color:#fff;
+margin:20px 0;
+line-height: 1;
+}
+.hero-desc{
+color:#acb2b8;
+font-size:17px;
+line-height:1.6;
+margin-bottom:30px;
+}
+.btn-main{
+background:var(--accent);
+color:#fff;
+padding:14px 40px;
+text-decoration:none;
+font-weight:bold;
+border-radius: 2px;
+transition: .3s;
+}
+.btn-main:hover{ background: #0088bb; box-shadow: 0 0 20px rgba(0,175,240,0.4); }
+
+.main{
+width:90%;
+max-width:1200px;
+margin:-40px auto 60px;
+position: relative;
+z-index: 5;
+}
+.section-title{
+color:#fff;
+font-size:18px;
+text-transform: uppercase;
+letter-spacing: 2px;
+border-left:4px solid var(--accent);
+padding-left:15px;
+margin:50px 0 20px;
+}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+gap:20px;
+}
+.card{
+background:var(--card-bg);
+border-radius:4px;
+overflow:hidden;
+transition:.3s cubic-bezier(0.4, 0, 0.2, 1);
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+display: flex;
+flex-direction: column;
+}
+.card:hover{
+transform:translateY(-10px);
+background:#1b2838;
+}
+.card img{
+width:100%;
+aspect-ratio:16/9;
+object-fit:cover;
+border-bottom:2px solid var(--accent);
+}
+.info{padding:15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;}
+.title{
+color:#fff;
+font-size:15px;
+font-weight: bold;
+margin-bottom: 10px;
+}
+.download{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.free{color:var(--steam-green);font-weight:bold; font-size: 14px;}
+.btn{
+background:#212c3d;
+color:var(--steam-blue);
+padding:8px 16px;
+text-decoration:none;
+font-weight:bold;
+font-size:12px;
+border-radius: 2px;
+transition: .2s;
+}
+.card:hover .btn{
+background:var(--accent);
+color:#fff;
+}
+footer{
+text-align:center;
+padding:60px 20px;
+font-size:12px;
+color:#444;
+border-top: 1px solid #111;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <a class="logo" href="#">DAC<span>HUB</span></a>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" id="heroBox">
+        <span class="hero-tag">DESTACADO</span>
+        <h1 class="hero-title" id="heroTitle"></h1>
+        <p class="hero-desc" id="heroDesc"></p>
+        <a href="#" class="btn-main" id="heroBtn">DESCARGAR AHORA</a>
+    </div>
+</section>
+
+<main class="main">
+    <h2 class="section-title">Nuevos Lanzamientos</h2>
+    <div class="grid" id="catalogo"></div>
+
+    <h2 class="section-title">Rockstar Games Collection</h2>
+    <div class="grid" id="rockstarGames"></div>
+
+    <h2 class="section-title">Imprescindibles</h2>
+    <div class="grid" id="topGames"></div>
+</main>
+
+<footer>
+    © 2026 DACHUB 
+</footer>
+
+<script>
+const juegosDestacados = [
+    {titulo:"Hollow Knight: Silksong", desc:"La esperada secuela de Hollow Knight. Explora un reino de seda y canciones en este épico metroidvania.", hero:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1030300/library_hero.jpg", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1030300/header.jpg", url:"https://www.mediafire.com/file/7duqlgl7a8i0xn4"},
+    {titulo:"Metal Gear Solid Delta", desc:"A remake of the 2004 game METAL GEAR SOLID 3: SNAKE EATER, with the same gripping story and engrossing world, now with all new graphics.", hero:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2417610/library_hero.jpg", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2417610/header.jpg", url:"https://buzzheavier.com/u8k1pz82kob0"},
+    {titulo:"Crash Bandicoot™ N. Sane Trilogy", desc:"Your favorite marsupial, Crash Bandicoot™, is back! He’s enhanced, entranced and ready-to-dance with the N. Sane Trilogy. Relive all your favorite moments in Crash Bandicoot™, Crash Bandicoot™ 2: Cortex", hero:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/731490/library_hero.jpg", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/731490/header.jpg", url:"https://gofile.io/d/10oF7M"}
+];
+
+const rockstarList = [
+    {titulo:"Max Payne 3", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/204100/header.jpg", url:"https://www.mediafire.com/file/silk6pqq7gglm5v"},
+    {titulo:"Grand Theft Auto V", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", url:"https://gofile.io/d/uJgXFD"},
+        {titulo:"GTA IV: Complete Edition", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12210/header.jpg", url:"https://www.mediafire.com/file/ssf0pnf6rk2of95"},
+    {titulo:"GTA: San Andreas – DE", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1546990/header.jpg", url:"https://www.mediafire.com/file/6kb77f5qxdcfzd6"},
+    {titulo:"GTA: Vice City – DE", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1547000/header.jpg", url:"https://www.mediafire.com/file/r0x4wcpf0tqiy7v"},
+    {titulo:"GTA III – DE", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1546970/header.jpg", url:"https://www.mediafire.com/file/l1j15jhed10gp9s"},
+    {titulo:"Red Dead Redemption 2", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", url:"https://gofile.io/d/5GYOmi"},
+    {titulo:"Red Dead Redemption 1", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2668510/header.jpg", url:"https://www.mediafire.com/file/mvfrclpp3yzxsit"}
+];
+
+const topList = [
+    {titulo:"South Park: Stick of Truth", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/213670/header.jpg", url:"#"},
+      {titulo:"South Park The Fractured But Whole", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/488790/header.jpg?t=1765228312", url:"#"},
+    {titulo:"God of WAR", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg?t=1763059412", url:"https://gofile.io/d/JmySlU"},
+    {titulo:"Resident Evil 4", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2050650/header.jpg?t=1736385712", url:"#"},
+   {titulo:"Spider-Man Remastered", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1817070/header.jpg", url:"https://gofile.io/d/qHWSaB"},
+    {titulo:"Elden Ring", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", url:"https://gofile.io/d/4FhGNh"},
+    {titulo:"Hollow Knight", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg", url:"https://www.mediafire.com/file/e5mm2clivttvxgk"},
+    {titulo:"Cuphead", thumb:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/268910/header.jpg", url:"https://www.mediafire.com/file/n023i97wiob8jih"}
+];
+
+// --- LÓGICA ---
+
+let heroIndex = 0;
+
+function updateHero() {
+    const g = juegosDestacados[heroIndex];
+    const heroBox = document.getElementById("heroBox");
+    
+    heroBox.classList.remove("active");
+    
+    setTimeout(() => {
+        document.getElementById("heroBg").style.backgroundImage = `url(${g.hero})`;
+        document.getElementById("heroTitle").textContent = g.titulo;
+        document.getElementById("heroDesc").textContent = g.desc;
+        document.getElementById("heroBtn").href = g.url; // Actualiza el link del botón hero
+        heroBox.classList.add("active");
+    }, 400);
+
+    heroIndex = (heroIndex + 1) % juegosDestacados.length;
+}
+
+function renderGrid(data, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = data.map(g => `
+        <div class="card">
+            <img src="${g.thumb}" alt="${g.titulo}">
+            <div class="info">
+                <div class="title">${g.titulo}</div>
+                <div class="download">
+                    <span class="free">FREE</span>
+                    <a href="${g.url}" target="_blank" class="btn">DESCARGAR</a>
+                </div>
+            </div>
+        </div>
+    `).join("");
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderGrid(juegosDestacados, "catalogo");
+    renderGrid(rockstarList, "rockstarGames");
+    renderGrid(topList, "topGames");
+    
+    updateHero();
+    setInterval(updateHero, 8000);
+});
+</script>
+
+</body>
+</html>
